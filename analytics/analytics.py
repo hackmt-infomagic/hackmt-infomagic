@@ -15,8 +15,8 @@ def get_document(user_id):
 def convert_start_end(user_data):
   '''Convert raw timestamps to datetime objects'''
   for session in user_data['sessions']:
-    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H:%M:%d')
-    session['end']   = datetime.strptime(session['end'],   '%Y/%m/%d %H:%M:%d')
+    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H:%M:%S')
+    session['end']   = datetime.strptime(session['end'],   '%Y/%m/%d %H:%M:%S')
 
 def convert_start_delta(user_data):
   '''Convert raw timestamps to a datetime and timedelta'''
@@ -29,7 +29,17 @@ def to_start_delta(user_data):
   for session in user_data['sessions']:
     session['end']   = session['end'] - session['start']
 
+def to_raw_timestamps(user_data):
+    '''Convert two datetime objects to raw timestamps'''
+    for session in user_data['sessions']:
+        session['start'] = session['start'].strftime('%Y/%m/%d %H:%M:%S')
+        session['end']   = session['end'].strftime('%Y/%m/%d %H:%M:%S')
 
+def to_start_end(user_data):
+    '''Convert datetime and timedelta to two datetime objects'''
+    for session in user_data['sessions']:
+        session['end']   = session['start'] + session['end']
+                    
 def subject_totals(user_data):
   '''Reurn the total time spent studying each subject for the given user.'''
 
@@ -53,15 +63,22 @@ def user_total(user_data):
 
 
 def calc_global_probabilities(user_data):
-    '''Calculate global probabilities'''
-    probabilities = numpy.zeros(len(user_data['subjects']))
-    total = 0.0
+    '''Calculate global probabilities of events given a list of sessions - including gaps'''
+    subjects = user_data['subjects']
+    probabilities = numpy.zeros(len(user_data['subjects'])+1)
     convert_start_delta(user_data)
+    lastend = user_data['sessions'][0]['start']
+    total = 0.0
     for session in user_data['sessions']:
-        probabilities[user_data['subjects'].index(session['subject'])] += session['end'].total_seconds()
-        print(session['end'].total_seconds())
-        total += session['end'].total_seconds()
+        session_time = session['end']
+        gap_time = session['start'] - lastend
+        probabilities[user_data['subjects'].index(session['subject'])] += session_time.total_seconds()
+        probabilities[len(probabilities)-1] += gap_time.total_seconds()
+        total += session_time.total_seconds() + gap_time.total_seconds()
+        lastend += session_time + gap_time
     probabilities /= total
+    to_start_end(user_data)
+    to_raw_timestamps(user_data)
     return(probabilities)
 
 
