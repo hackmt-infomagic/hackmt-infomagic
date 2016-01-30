@@ -26,7 +26,7 @@ def convert_start_delta(user_data):
 
 def to_start_delta(user_data):
   '''Convert from two datetime objects to a datetime and timedelta'''
-  for session in user_data['session']:
+  for session in user_data['sessions']:
     session['end']   = session['end'] - session['start']
 
 
