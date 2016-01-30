@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from datetime import datetime, timedelta
-
 from pymongo import MongoClient
+from math import ceil
 
 def get_document(user_id):
     client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
@@ -80,6 +80,90 @@ def calc_global_probabilities(user_data):
     to_start_end(user_data)
     to_raw_timestamps(user_data)
     return(probabilities)
+
+
+def split_session(session, offset):
+  '''
+
+  offset : a duration specifying how far into the session to make the split
+  '''
+
+  # The datetime of the split
+  middle = session['start'] + offset
+
+  one = {'subject': session['subject'], 'start': session['start'],
+         'end': middle - session['start'], 'tags': session['tags']}
+
+  two = {'subject': session['subject'], 'start': middle,
+         'end': (session['start'] + session['end']) - middle, 'tags': session['tags']}
+
+  return (one, two)
+
+
+def bin_data(user_data, bin_duration):
+  '''
+  '''
+  global_start = user_data['sessions'][0]['start']
+  global_end   = user_data['sessions'][-1]['start'] + user_data['sessions'][-1]['end']
+
+  num_bins = int(ceil((global_end - global_start) / bin_duration))
+
+  # End datetime of the current bin
+  end_curr_bin = global_start + bin_duration
+
+  curr_bin_data = []
+
+  bin_data = []
+
+  # Number of sessions in user_data['sessions']
+  num_sessions = len(user_data['sessions'])
+
+  # Index of the next session in user_data['sessions']
+  next_ind = 0
+
+  # Holds the remainder if splitting occurs 
+  remainder = []
+
+  # Fill each bin
+  for i in range(num_bins):
+    # Check if the remainder overflows
+    if len(remainder) > 0:
+      if (remainder[0]['start'] + remainder[0]['end']) > end_curr_bin:
+        one, two = split_session(remainder[0], end_curr_bin - remainder[0]['start'])
+        bin_data.append([one])
+        remainder = [ two ]
+        end_curr_bin += bin_duration
+        continue
+      else:
+        curr_bin_data.append(remainder[0])
+        remainder = []
+
+    # Add sessions to this bin until we run out or go over
+    while (next_ind < num_sessions and
+           user_data['sessions'][next_ind]['start'] < end_curr_bin):
+      # Get reference to next session
+      session = user_data['sessions'][next_ind]
+
+      # End of the next session
+      session_end = session['start'] + session['end']
+
+      # Check for boundary crossing
+      if session_end <= end_curr_bin:
+        curr_bin_data.append(session)
+      else:
+        one, two = split_session(session, end_curr_bin - session['start'])
+        curr_bin_data.append(one)
+        remainder = [ two ]
+
+      # Increment index of next session
+      next_ind += 1
+    #End while --------------------------
+
+    bin_data.append(curr_bin_data)
+    end_curr_bin += bin_duration
+    curr_bin_data = []
+
+  return bin_data
 
 
 def cumulative(user_data, num_bins):
