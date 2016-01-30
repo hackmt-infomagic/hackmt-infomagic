@@ -1,0 +1,18 @@
+{
+  "name": "Infomagic",
+  "version": "0.0.0",
+  "author": "Geoffrey Gross",
+  "main": "views/index.hbs",
+  "dependencies": {
+    "foundation-sites": "~6.1.0",
+    "motion-ui": "~1.1.0"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true
+}
