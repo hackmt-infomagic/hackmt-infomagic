@@ -30,7 +30,7 @@ gulp.task('sass', function() {
         .pipe(plugins.autoprefixer({
             browsers: ['last 2 versions', 'ie >= 9']
         }))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('public/build'));
 });
 
 gulp.task('react', function() {
@@ -38,7 +38,7 @@ gulp.task('react', function() {
         .transform(reactify)
         .bundle()
         .pipe(source('bundle.js'))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('public/build'));
 });
 
 gulp.task('watch', function(){

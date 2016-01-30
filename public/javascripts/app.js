@@ -3,7 +3,7 @@
  */
 var React = require('react');
 var ReactDom = require('react-dom');
-var InfomagicApp = require('./components/Infomagic.react');
+var InfomagicApp = require('./components/InfomagicApp.react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
