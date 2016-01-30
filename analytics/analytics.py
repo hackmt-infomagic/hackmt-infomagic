@@ -61,8 +61,8 @@ def user_total(user_data):
 
   return total
 
-def calc_probabilities(user_data):
-    '''Calculate probabilities of events given a list of sessions - including gaps'''
+def calc_global_probabilities(user_data):
+    '''Calculate global probabilities of events given a list of sessions - including gaps'''
     ## Setup timestamps as datetime-timedelta
     convert_start_delta(user_data)
 
@@ -112,18 +112,16 @@ def calc_probabilities(user_data):
     
     ## Calculate transition probabilities using non-zero gaps
     for x in range(len(sessions)-1):
-        if gaps[x] > 0.0:
+        if gaps[x] > 0.0 and sessions[x]['subject'] != sessions[x+1]['subject']:
             transition_probabilities[subjects.index(sessions[x]['subject']),subjects.index(sessions[x+1]['subject'])] += 1.0
         else:
             transition_probabilities[subjects.index(sessions[x]['subject']),len(subjects)-1] += 1.0
             transition_probabilities[len(subjects)-1,subjects.index(sessions[x+1]['subject'])] += 1.0
 
     ## Normalization
-    print(numpy.around(transition_probabilities,decimals=1))
-    print(numpy.around(transition_probabilities.sum(axis=1),decimals=1))
-    print(numpy.around(transition_probabilities.sum(axis=0),decimals=1))
     t_from = transition_probabilities / transition_probabilities.sum(axis=1)[:,numpy.newaxis]
     t_to = transition_probabilities / transition_probabilities.sum(axis=0)
+    t_joint = transition_probabilities / transition_probabilities.sum()
     
     ## Cutoff for relevance
     t_from[t_from<0.00000001] = 0.0
@@ -134,5 +132,6 @@ def calc_probabilities(user_data):
     to_raw_timestamps(user_data)
     return({'P':state_probabilities,
             'from':t_from,
-            'to':t_to})
+            'to':t_to,
+            'joint':t_joint})
 
