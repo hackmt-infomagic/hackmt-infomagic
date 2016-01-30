@@ -31,14 +31,14 @@ app.use(require('node-sass-middleware')({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'bower_components')));
 
 app.use(function(req, res, next){
   req.db = db;
   next();
 });
-
-app.use('/', routes);
 app.use('/users', users);
+app.use('*', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
