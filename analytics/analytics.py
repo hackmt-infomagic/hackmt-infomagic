@@ -256,3 +256,24 @@ def cumulative(user_data, num_bins):
 
   return bin_data
 
+
+def subject_session_counts(user_data):
+  '''
+  '''
+  # Initialize a dict of subject -> total
+  totals = {subject : 0 for subject in user_data['subjects']}
+
+  for session in user_data['sessions']:
+    totals[session['subject']] += 1
+
+  return totals
+
+
+def average_session_length(user_data):
+  '''
+  '''
+  sub_totals = subject_totals(user_data)
+  session_counts = subject_session_counts(user_data)
+  for key in sub_totals.keys():
+    sub_totals[key] /= session_counts[key]
+
