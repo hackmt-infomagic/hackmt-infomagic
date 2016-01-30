@@ -62,13 +62,20 @@ def user_total(user_data):
   return total
 
 def calc_global_probabilities(user_data):
-    '''Calculate global probabilities'''
-    probabilities = numpy.zeros(len(user_data['subjects']))
-    total = 0.0
+    '''Calculate global probabilities of events given a list of sessions - including gaps'''
+    subjects = user_data['subjects']
+    probabilities = numpy.zeros(len(user_data['subjects'])+1)
     convert_start_delta(user_data)
+    lastend = user_data['sessions'][0]['start']
+    total = 0.0
     for session in user_data['sessions']:
-        probabilities[user_data['subjects'].index(session['subject'])] += session['end'].total_seconds()
-        print(session['end'].total_seconds())
-        total += session['end'].total_seconds()
+        session_time = session['end']
+        gap_time = session['start'] - lastend
+        probabilities[user_data['subjects'].index(session['subject'])] += session_time.total_seconds()
+        probabilities[len(probabilities)-1] += gap_time.total_seconds()
+        total += session_time.total_seconds() + gap_time.total_seconds()
+        lastend += session_time + gap_time
     probabilities /= total
+    to_start_end(user_data)
+    to_raw_timestamps(user_data)
     return(probabilities)
