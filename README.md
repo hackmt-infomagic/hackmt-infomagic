@@ -7,8 +7,12 @@ description goes here
 
 ## Install instructions
 
-- do git `repo name`
+- do `git https://github.com/hackmt-infomagic/hackmt-infomagic.git`
 - cd into the directory
 - run `npm install`
 - run `bower install`
-- Before you start programming run gulp
+- run `npm install -g gulp`
+
+Now before you do any programming run `gulp`. This should alwasy be running when you do any programming on the front end.
+
+To start the local server run `npm start`
