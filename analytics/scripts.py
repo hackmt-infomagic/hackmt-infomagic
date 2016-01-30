@@ -14,17 +14,39 @@ def get_document(user_id):
 
 def convert_start_end(user_data):
   '''Convert raw timestamps to datetime objects'''
-  for session in user_data.sessions:
-    session.start = datetime.strptime(session.start, '%Y/%m/%d %H/%M/%d')
-    session.end   = datetime.strptime(session.end,   '%Y/%m/%d %H/%M/%d')
+  for session in user_data['sessions']:
+    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H/%M/%d')
+    session['end']   = datetime.strptime(session['end'],   '%Y/%m/%d %H/%M/%d')
 
 def convert_start_delta(user_data):
   '''Convert raw timestamps to a datetime and timedelta'''
-  for session in user_data.sessions:
-    session.start = datetime.strptime(session.start, '%Y/%m/%d %H/%M/%d')
-    session.end   = session.end - session.start
+  for session in user_data['sessions']:
+    session.['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H/%M/%d')
+    session.['end']   = session['end'] - session['start']
 
 def to_start_delta(user_data):
   '''Convert from two datetime objects to a datetime and timedelta'''
+  for session in user_data['session']:
+    session['end']   = session['end'] - session['start']
+
+
+def subject_totals(user_data):
+  '''Reurn the total time spent studying each subject for the given user.'''
+
+  # Initialize a dict of subject -> total
+  totals = {subject : timedelta() for subject in user_data['subjects']}
+  
+  for session in user_data.sessions:
+    totals[session['subject']] += session['end']
+
+  return totals
+
+
+def user_total(user_data):
+  '''Return the total number of hours a user has studied'''
+
+  total = timedelta()
   for session in user_data.session:
-    session.end   = session.end - session.start
+    total += session.end
+
+  return total
