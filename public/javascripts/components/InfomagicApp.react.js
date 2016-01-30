@@ -3,6 +3,7 @@
  */
 var React = require('react');
 var AppHeader = require('./AppHeader.react');
+var AppFooter = require('./AppFooter.react');
 
 var InfomagicApp = React.createClass({
     componentDidMount: function(){
@@ -16,8 +17,9 @@ var InfomagicApp = React.createClass({
             <div>
                 <AppHeader />
                 <h1>
-                    Hellow World!
+                    Hellow World! New Test. Hell yeah. Test
                 </h1>
+                <AppFooter />
             </div>
         );
     }

@@ -7,10 +7,8 @@ var React = require('react');
 var AppHeader = React.createClass({
     render: function(){
         return (
-            <div className="fixed">
-            	<nav className="top-bar" data-topbar role="navigation">
-    				...
-  				</nav>
+            <div>
+                Put header code here! More data.
             </div>
         );
     }
