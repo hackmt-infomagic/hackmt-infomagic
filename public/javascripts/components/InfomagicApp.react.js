@@ -2,6 +2,7 @@
  * Created by rayde on 1/30/2016.
  */
 var React = require('react');
+var AppHeader = require('./AppHeader.react');
 
 var InfomagicApp = React.createClass({
     componentDidMount: function(){
@@ -13,6 +14,7 @@ var InfomagicApp = React.createClass({
     render: function(){
         return (
             <div>
+                <AppHeader />
                 <h1>
                     Hellow World!
                 </h1>

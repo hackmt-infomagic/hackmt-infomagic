@@ -19,7 +19,7 @@ ReactDom.render((
 ), document.getElementById('react-container'));
 
 
-},{"./components/InfomagicApp.react":217,"react":216,"react-dom":3,"react-router":31}],2:[function(require,module,exports){
+},{"./components/InfomagicApp.react":218,"react":216,"react-dom":3,"react-router":31}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -23759,7 +23759,26 @@ module.exports = require('./lib/React');
 /**
  * Created by rayde on 1/30/2016.
  */
+
 var React = require('react');
+
+var AppHeader = React.createClass({displayName: "AppHeader",
+    render: function(){
+        return (
+            React.createElement("div", null, 
+                "Put header code here!"
+            )
+        );
+    }
+});
+
+module.exports = AppHeader;
+},{"react":216}],218:[function(require,module,exports){
+/**
+ * Created by rayde on 1/30/2016.
+ */
+var React = require('react');
+var AppHeader = require('./AppHeader.react');
 
 var InfomagicApp = React.createClass({displayName: "InfomagicApp",
     componentDidMount: function(){
@@ -23771,6 +23790,7 @@ var InfomagicApp = React.createClass({displayName: "InfomagicApp",
     render: function(){
         return (
             React.createElement("div", null, 
+                React.createElement(AppHeader, null), 
                 React.createElement("h1", null, 
                     "Hellow World!"
                 )
@@ -23781,4 +23801,4 @@ var InfomagicApp = React.createClass({displayName: "InfomagicApp",
 
 module.exports = InfomagicApp;
 
-},{"react":216}]},{},[1]);
+},{"./AppHeader.react":217,"react":216}]},{},[1]);
