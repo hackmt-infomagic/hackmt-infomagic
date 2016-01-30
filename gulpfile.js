@@ -43,7 +43,7 @@ gulp.task('react', function() {
 
 gulp.task('watch', function(){
     gulp.watch(['public/**/*.scss'], ['sass']);
-    gulp.watch(['public/**/*.js'], ['react']);
+    gulp.watch(['public/**/*.js', '!public/build/*.js'], ['react']);
 });
 
 gulp.task('default', ['watch', 'sass', 'react']);
