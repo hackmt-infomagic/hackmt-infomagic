@@ -7,9 +7,10 @@ description goes here
 
 ## Install instructions
 
-- do `git https://github.com/hackmt-infomagic/hackmt-infomagic.git`
+- do `git clone https://github.com/hackmt-infomagic/hackmt-infomagic.git`
 - cd into the directory
 - run `npm install`
+- run `npm instal -g bower`
 - run `bower install`
 - run `npm install -g gulp`
 
