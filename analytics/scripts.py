@@ -50,3 +50,15 @@ def user_total(user_data):
     total += session.end
 
   return total
+
+def calc_global_probabilities(user_data):
+    '''Calculate global probabilities'''
+    probabilities = numpy.zeros(len(user_data['subjects']))
+    total = 0.0
+    convert_start_delta(user_data)
+    for session in user_data['sessions']:
+        probabilities[user_data['subjects'].index(session['subject'])] += session['end'].total_seconds()
+        print(session['end'].total_seconds())
+        total += session['end'].total_seconds()
+    probabilities /= total
+    return(probabilities)
