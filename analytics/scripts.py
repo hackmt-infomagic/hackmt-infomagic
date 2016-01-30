@@ -15,14 +15,14 @@ def get_document(user_id):
 def convert_start_end(user_data):
   '''Convert raw timestamps to datetime objects'''
   for session in user_data['sessions']:
-    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H/%M/%d')
-    session['end']   = datetime.strptime(session['end'],   '%Y/%m/%d %H/%M/%d')
+    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H:%M:%d')
+    session['end']   = datetime.strptime(session['end'],   '%Y/%m/%d %H:%M:%d')
 
 def convert_start_delta(user_data):
   '''Convert raw timestamps to a datetime and timedelta'''
   for session in user_data['sessions']:
-    session.['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H/%M/%d')
-    session.['end']   = session['end'] - session['start']
+    session['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H:%M:%S')
+    session['end']   = datetime.strptime(session['end'], '%Y/%m/%d %H:%M:%S') - session['start']
 
 def to_start_delta(user_data):
   '''Convert from two datetime objects to a datetime and timedelta'''
