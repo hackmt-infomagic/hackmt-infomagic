@@ -36,7 +36,7 @@ def subject_totals(user_data):
   # Initialize a dict of subject -> total
   totals = {subject : timedelta() for subject in user_data['subjects']}
   
-  for session in user_data.sessions:
+  for session in user_data['sessions']:
     totals[session['subject']] += session['end']
 
   return totals
@@ -46,10 +46,11 @@ def user_total(user_data):
   '''Return the total number of hours a user has studied'''
 
   total = timedelta()
-  for session in user_data.session:
+  for session in user_data['session']:
     total += session.end
 
   return total
+
 
 def calc_global_probabilities(user_data):
     '''Calculate global probabilities'''
@@ -62,3 +63,40 @@ def calc_global_probabilities(user_data):
         total += session['end'].total_seconds()
     probabilities /= total
     return(probabilities)
+
+
+def cumulative(user_data, num_bins):
+  '''
+  '''
+  global_start = user_data['sessions'][0]['start']
+  global_end   = user_data['sessions'][-1]['start']
+
+  # The duration of a single bin
+  step_size = (global_end - global_start) / num_bins
+
+  # The datetime marking the end of the current bin
+  curr_bin_end = global_start + step_size
+
+  # The total for the current bin
+  curr_bin_total = timedelta()
+
+  # The list of bin totals
+  bin_data = []
+
+  # Assumes sessions are in chronological order
+  for session in user_data['sessions']:
+    # Should really be checking end times
+    if session['start'] < curr_bin_end:
+      curr_bin_total += session['end']
+    else:
+      bin_data.append(curr_bin_total)
+      curr_bin_total = session['end']
+      curr_bin_end += step_size
+
+  # Ensure that len(bin_data) == num_bins
+  for _ in range(num_bins - len(bin_data)):
+    bin_data.append(timedelta())
+
+  return bin_data
+
+
