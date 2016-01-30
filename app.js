@@ -5,6 +5,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var mongodb = require('mongodb');
+var monk = require('monk');
+var db = monk('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -27,6 +31,11 @@ app.use(require('node-sass-middleware')({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(req, res, next){
+  req.db = db;
+  next();
+});
 
 app.use('/', routes);
 app.use('/users', users);
