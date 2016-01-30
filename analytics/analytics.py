@@ -12,6 +12,14 @@ def get_document(user_id):
     match = collection.find({'user_id':user_id})[0]
     return (match)
 
+def push_stats(user_id,key,data):
+    match = get_document(user_id)
+    if 'stats' in match.keys():
+        match['stats'][key] = data
+    else:
+        match['stats'] = {key:data}
+    match.update()
+    
 def convert_start_end(user_data):
   '''Convert raw timestamps to datetime objects'''
   for session in user_data['sessions']:
