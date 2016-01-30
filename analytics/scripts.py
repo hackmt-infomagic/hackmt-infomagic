@@ -22,7 +22,7 @@ def convert_start_delta(user_data):
   '''Convert raw timestamps to a datetime and timedelta'''
   for session in user_data['sessions']:
     session.['start'] = datetime.strptime(session['start'], '%Y/%m/%d %H:%M:%S')
-    session.['end']   = session['end'] - session['start']
+    session.['end']   = datetime.strptime(session['end'], '%Y/%m/%d %H:%M:%S')- session['start']
 
 def to_start_delta(user_data):
   '''Convert from two datetime objects to a datetime and timedelta'''
