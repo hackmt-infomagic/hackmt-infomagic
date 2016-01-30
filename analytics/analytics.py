@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
+import numpy
 from datetime import datetime, timedelta
 from pymongo import MongoClient
 from math import ceil
+from sklearn.neighbors import KernelDensity
 
 def get_db_connection():
     client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
     db = client['hackmt-infomagic']
     return db
 
-def get_document(user_id):
-    client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
-    db = client['hackmt-infomagic']
+def get_document(db,user_id):
     collection = db['Users']
     # silent error
     match = collection.find({'user_id':user_id})[0]
@@ -74,26 +74,35 @@ def user_total(user_data):
   return total
 
 
-def calc_global_probabilities(user_data):
+def calc_probabilities(subjects,sessions):
     '''Calculate global probabilities of events given a list of sessions - including gaps'''
     ## Setup timestamps as datetime-timedelta
-    convert_start_delta(user_data)
+    ## convert_start_delta(user_data)
 
-    subjects = user_data['subjects'] + ['Not Tracked']
+    subjects = subjects + ['Not Tracked']
     n = len(subjects)
     state_probabilities = numpy.zeros(n)
+    if len(sessions) < 2:
+        if len(sessions) == 1:
+            state_probabilities[subjects.index(sessions[0]['subject'])] = 1.0
+        else:
+            state_probabilities[len(subjects)-1] = 1.0
+        return({'P':state_probabilities,
+                'from':None,
+                'to':None,
+                'joint':None})
+    
     ## Using this to avoid divide-by-zero, for now...
     transition_probabilities = numpy.zeros((n,n))+0.00000001
-    lastend = user_data['sessions'][0]['start']
+    lastend = sessions[0]['start']
     total = 0.0
     gaps = []
 
-
     ## Calculate overall state probabilities and gap lengths
-    for session in user_data['sessions']:
+    for session in sessions:
         session_time = session['end']
         gap_time = session['start'] - lastend
-        state_probabilities[user_data['subjects'].index(session['subject'])] += session_time.total_seconds()
+        state_probabilities[subjects.index(session['subject'])] += session_time.total_seconds()
         state_probabilities[n-1] += gap_time.total_seconds()
         total += session_time.total_seconds() + gap_time.total_seconds()
         lastend += session_time + gap_time
@@ -119,7 +128,7 @@ def calc_global_probabilities(user_data):
     cutoff = numpy.asscalar(x_plot[x])
     ## ax.plot(x_plot[x],dens[x],'or')
     ## plot.show()
-    
+
     ## Set long gaps to zero, since they are not part of the bottom half (connected events)
     gaps[gaps > cutoff] = 0.0
     
@@ -141,8 +150,8 @@ def calc_global_probabilities(user_data):
     t_to[t_to<0.00000001] = 0.0
     
     ## Convert timestamps back to standard storage
-    to_start_end(user_data)
-    to_raw_timestamps(user_data)
+    ## to_start_end(user_data)
+    ## to_raw_timestamps(user_data)
 
     return({'P':state_probabilities,
             'from':t_from,
@@ -288,4 +297,11 @@ def average_session_length(user_data):
   session_counts = subject_session_counts(user_data)
   for key in sub_totals.keys():
     sub_totals[key] /= session_counts[key]
+
+
+def calc_binned_probabilities(user_data, bin_duration):
+    results = []
+    for data in bin_data(user_data,bin_duration):
+        results.append(calc_probabilities(user_data['subjects'],data))
+    return(results)
 
