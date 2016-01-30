@@ -8,7 +8,7 @@ var AppHeader = React.createClass({
     render: function(){
         return (
             <div>
-                Put header code here!
+                Put header code here! More data.
             </div>
         );
     }
