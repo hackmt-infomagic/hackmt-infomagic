@@ -11,6 +11,7 @@ var Route = ReactRouter.Route;
 var browserHistory = ReactRouter.browserHistory;
 var IndexRoute = ReactRouter.IndexRoute;
 var GraphComponent = require('./components/GraphComponent.react');
+var Overview = require('./components/Overview.react');
 
 AppActions.getUser(222);
 
