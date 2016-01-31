@@ -18,7 +18,7 @@ AppActions.getUser(222);
 ReactDom.render((
     <Router history={browserHistory}>
         <Route path="/" component={InfomagicApp}>
-            <IndexRoute component={GraphComponent} />
+            <IndexRoute component={Overview} />
         </Route>
     </Router>
 ), document.getElementById('react-container'));
