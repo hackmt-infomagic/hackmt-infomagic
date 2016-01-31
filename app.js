@@ -11,6 +11,8 @@ var db = monk('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/h
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var stats = require('./routes/stats');
+var subjects = require ('./routes/subjects');
 
 var app = express();
 
