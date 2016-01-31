@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 var _user = {};
 
-var _stats = [];
+var _stats = {};
 
 function loadUserData(data){
     _user = _.omit(data, 'stats');
@@ -40,6 +40,7 @@ AppDispatcher.register(function(payload){
     switch (action.actionType){
         case AppConstants.RECEIVE_USER:
             loadUserData(action.user);
+            console.log('I recieved stuff.');
             break;
         default:
             return true;

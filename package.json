@@ -26,7 +26,8 @@
     "mongodb": "2.1.4",
     "monk": "1.0.1",
     "keymirror": "^0.1.1",
-    "flux": "^2.0.0"
+    "flux": "^2.0.0",
+    "chart.js": "1.0.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
