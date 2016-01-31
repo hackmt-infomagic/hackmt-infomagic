@@ -23,3 +23,8 @@ def test_binning(group_size):
   analytics.convert_start_delta(user_data)
   bin_data = analytics.bin_data(user_data, group_size)
   return test_bin_splitting(bin_data, group_size)
+
+def test_cumulative():
+  user_data = analytics.get_document(222)
+  analytics.convert_start_delta(user_data)
+  return analytics.cumulative(user_data)

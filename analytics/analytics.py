@@ -15,11 +15,19 @@ def get_db_connection():
     db = client['hackmt-infomagic']
     return db
 
+<<<<<<< HEAD
 def get_document(db,user_id):
+=======
+
+def get_document(user_id):
+    client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
+    db = client['hackmt-infomagic']
+>>>>>>> jgd
     collection = db['Users']
     # silent error
     match = collection.find({'user_id':user_id})[0]
     return (match)
+
 
 def push_stats(db, user_id,key,data):
     db['Users'].update_one(
@@ -68,12 +76,20 @@ def subject_totals(user_data):
   return totals
 
 
-def user_total(user_data):
+def subject_totals_hours(user_data):
+  totals = subject_totals(user_data)
+  for key in totals.keys():
+    totals[key] = totals[key].total_seconds() / 3600
+
+  return totals
+
+
+def total(user_data):
   '''Return the total number of hours a user has studied'''
 
   total = timedelta()
-  for session in user_data['session']:
-    total += session.end
+  for session in user_data['sessions']:
+    total += session['end']
 
   return total
 
@@ -247,45 +263,91 @@ def bin_data(user_data, bin_duration):
   return bin_data
 
 
-def cumulative(user_data, num_bins):
+def datetime_to_string(dt):
+  return dt.strftime('%Y/%m/%d %H:%M:%S')
+
+
+def global_start(user_data):
+  return user_data['sessions'][0]['start']
+
+
+def global_start_string(user_data):
+  return datetime_to_string(global_start(user_data))
+
+
+def global_end(user_data):
+  return user_data['sessions'][-1]['start'] + user_data['sessions'][-1]['end']
+
+
+def global_end_string(user_data):
+  return datetime_to_string(global_end(user_data))
+
+
+def cumulative(user_data, num_bins=100):
   '''
   '''
-  global_start = user_data['sessions'][0]['start']
-  global_end   = user_data['sessions'][-1]['start']
 
-  # The duration of a single bin
-  step_size = (global_end - global_start) / num_bins
+  bin_duration = (global_end(user_data) - global_start(user_data)) / num_bins
 
-  # The datetime marking the end of the current bin
-  curr_bin_end = global_start + step_size
+  bdata = bin_data(user_data, bin_duration)
 
-  # The total for the current bin
-  curr_bin_total = timedelta()
+  sums = []
+  for b in bdata:
+    curr_sum = timedelta()
+    for session in b:
+      curr_sum += session['end']
+    sums.append(curr_sum)
 
-  # The list of bin totals
-  bin_data = []
+  cums = [sums[0]]
+  for j in range(1, len(sums)):
+    cums.append(sums[j] + cums[j-1])
 
-  # Assumes sessions are in chronological order
-  for session in user_data['sessions']:
-    # Should really be checking end times
-    if session['start'] < curr_bin_end:
-      curr_bin_total += session['end']
-    else:
-      bin_data.append(curr_bin_total)
-      curr_bin_total = session['end']
-      curr_bin_end += step_size
+  return cums
 
-  # Ensure that len(bin_data) == num_bins
-  for _ in range(num_bins - len(bin_data)):
-    bin_data.append(timedelta())
+def cumulative_hours(user_data):
+  cums = cumulative(user_data)
+  return [cum.total_seconds() / 3600 for cum in cums]
 
-  return bin_data
+
+def subject_cumulatives(user_data, num_bins=100):
+
+  # Dictionary of lists
+  subject_cums = {subject : [] for subject in user_data['subjects']}
+
+  bin_duration = (global_end(user_data) - global_start(user_data)) / num_bins
+
+  bdata = bin_data(user_data, bin_duration)
+
+  for b in bdata:
+    curr_subject_cums = {subject : timedelta() for subject in user_data['subjects']}
+
+    # Get per-subject sums for this bin
+    for session in b:
+      curr_subject_cums[session['subject']] += session['end']
+ 
+    for subject in user_data['subjects']:
+      subject_cums[subject].append(curr_subject_cums[subject])
+
+  # make cumulative
+  for key in subject_cums.keys():
+    for i in range(1, len(subject_cums[key])):
+      subject_cums[key][i] += subject_cums[key][i-1]
+
+  return subject_cums
+
+
+def subject_cumulatives_hours(user_data):
+  subject_cums = subject_cumulatives(user_data)
+  for key in subject_cums.keys():
+    for i in range(len(subject_cums[key])):
+      subject_cums[key][i] = subject_cums[key][i].total_seconds() / 3600
+
+  return subject_cums
 
 
 def subject_session_counts(user_data):
+  '''Count the total number of sessions for each subject
   '''
-  '''
-  # Initialize a dict of subject -> total
   totals = {subject : 0 for subject in user_data['subjects']}
 
   for session in user_data['sessions']:
@@ -294,14 +356,15 @@ def subject_session_counts(user_data):
   return totals
 
 
-def average_session_length(user_data):
-  '''
+def average_session_lengths(user_data):
+  '''Return the average duration of a session for a 
   '''
   sub_totals = subject_totals(user_data)
   session_counts = subject_session_counts(user_data)
   for key in sub_totals.keys():
     sub_totals[key] /= session_counts[key]
 
+<<<<<<< HEAD
 
 def calc_binned_probabilities(user_data, bin_duration):
     results = []
@@ -398,3 +461,34 @@ def mcmc_simulation(user_data,hmcm,coarse_duration,fine_duration,coarse_iteratio
         ## Update scenario_time
         scenario_time += coarse_duration
     return(new_sessions)
+=======
+  return sub_totals
+
+
+def average_session_lengths_hours(user_data):
+  lengths = average_session_lengths(user_data)
+  for key in lengths.keys():
+    lengths[key] = lengths[key].total_seconds() / 3600
+
+  return lengths
+
+def longest_sessions(user_data):
+  '''
+  '''
+  longest_sessions = {subject : timedelta() for subject in user_data['subjects']}
+
+  for session in user_data['sessions']:
+    if session['end'] > longest_sessions[session['subject']]:
+      longest_sessions[session['subject']] = session['end']
+
+  return longest_sessions
+
+
+def longest_sessions_hours(user_data):
+  longests = longest_sessions(user_data)
+  longests_hours = {}
+  for key in longests.keys():
+    longests_hours[key] = longests[key].total_seconds() / 3600
+
+  return longests_hours
+>>>>>>> jgd
