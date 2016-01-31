@@ -28,6 +28,7 @@ var InfomagicApp = React.createClass({
         return (
             <div>
                 <AppHeader />
+                {this.props.children}
             </div>
         );
     },
