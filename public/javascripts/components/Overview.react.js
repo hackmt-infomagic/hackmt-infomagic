@@ -9,24 +9,19 @@ var Overview = React.createClass({
     render: function(){
         return(
 			<div>
+				<div className="spacer45"></div>
 				<AppHeader />
 				<GraphComponent />
-				<div className="footer">
-					<div className="small-12 start-button columns">
+				<div className="footer short">
+					<div className="small-12 stop-button columns">
 						<a href="#"><span></span>
 							<h1>
 								Start
 							</h1>
 						</a>
 					</div>
-					<div className="small-12 stop-button columns">
-						<a href="#"><span></span>
-							<h1>
-								Stopping
-							</h1>
-						</a>
-					</div>
 				</div>
+				<div className="spacer90"></div>
 			</div>
         );
     }
