@@ -244,11 +244,25 @@ def bin_data(user_data, bin_duration):
   return bin_data
 
 
+def datetime_to_string(dt):
+  return dt.strftime('%Y/%m/%d %H:%M:%S')
+
+
 def global_start(user_data):
   return user_data['sessions'][0]['start']
 
+
+def global_start_string(user_data):
+  return datetime_to_string(global_start(user_data))
+
+
 def global_end(user_data):
   return user_data['sessions'][-1]['start'] + user_data['sessions'][-1]['end']
+
+
+def global_end_string(user_data):
+  return datetime_to_string(global_end(user_data))
+
 
 def cumulative(user_data, num_bins=100):
   '''
@@ -341,7 +355,7 @@ def average_session_lengths_hours(user_data):
 
   return lengths
 
-def longest_session(user_data):
+def longest_sessions(user_data):
   '''
   '''
   longest_sessions = {subject : timedelta() for subject in user_data['subjects']}
@@ -351,3 +365,12 @@ def longest_session(user_data):
       longest_sessions[session['subject']] = session['end']
 
   return longest_sessions
+
+
+def longest_sessions_hours(user_data):
+  longests = longest_sessions(user_data)
+  longests_hours = {}
+  for key in longests.keys():
+    longests_hours[key] = longests[key].total_seconds() / 3600
+
+  return longests_hours
