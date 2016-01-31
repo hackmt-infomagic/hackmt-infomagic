@@ -326,6 +326,12 @@ def cluster_probabilities(binned_probabilities,n_clust):
         probabilities[x,:] = temp / numpy.linalg.norm(temp)
     transitions = numpy.zeros((n_clust,n_clust))+0.00000001
     for x in range(len(assignments)-1):
-    transitions[assignments[x],assignments[x+1]] += 1.0
+        transitions[assignments[x],assignments[x+1]] += 1.0
     transitions /= transitions.sum()
     return({'P':probabilities,'joint':transitions,'assignments':assignments,'n_clust':n_clust})
+
+def heirarchical_markov_chain_model(user_data,bin_duration,n_clust):
+    fine_grained = calc_binned_probabilities(user_data,bin_duration)
+    coarse_grained = cluster_probabilities(fine_grained,n_clust)
+    return({'fine':fine_grained,'coarse':coarse_grained})
+    
