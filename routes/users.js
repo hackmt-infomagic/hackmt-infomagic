@@ -10,7 +10,7 @@ router.get('/:userId', function(req, res, next) {
   var db = req.db;
   var userId = parseInt(req.params.userId, '10');
   db.get('Users').findOne({'user_id': userId}, function(err, document){
-    res.send(document);
+    res.send({results: document});
   });
 });
 
