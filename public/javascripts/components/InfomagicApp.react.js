@@ -3,7 +3,6 @@
  */
 var React = require('react');
 var UserStore = require('../stores/UserStore');
-var AppHeader = require('./AppHeader.react');
 
 function getAppState(){
     return {
@@ -16,7 +15,6 @@ var InfomagicApp = React.createClass({
     render: function(){
         return (
             <div>
-                <AppHeader />
                 {this.props.children}
             </div>
         );

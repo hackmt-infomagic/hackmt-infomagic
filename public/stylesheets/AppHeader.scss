@@ -3,11 +3,21 @@ p {
 	color: black;
 }
 
+.spacer90 {
+	height: 90px;
+}
+.spacer45 {
+	height: 90px;
+}
+
 .nav-bar {
 	background-color: $theme-dark-blue !important;
 	text-align: center;
 	text-transform: uppercase;
 	overflow: auto;
+	position:fixed;
+	width: 100%;
+	top: 0;
 
 	h1 {
 		color: white !important;
@@ -29,13 +39,20 @@ p {
 	height: 9000px;
 	width: 100%;
 	bottom: 0;
-    height: 90px;
-    background-color: $theme-dark-blue !important;
     text-transform: uppercase;
     text-align: center;
+    height: 45px;
 
     .small-12 {
     	height: 45px;
+    }
+
+    .large-12 {
+    	height: 90px;
+
+    	h1{
+    		padding-top: 30px;
+    	}
     }
 
     h1 {
@@ -63,4 +80,8 @@ p {
 	.stop-button{
 		background-color: $theme-ruby;
 	}   
+
+	.start-button{
+		background-color: $theme-dark-blue;
+	}
 }
