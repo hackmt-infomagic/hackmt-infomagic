@@ -2,22 +2,20 @@
  * Created by rayde on 1/30/2016.
  */
 var React = require('react');
-var AppHeader = require('./AppHeader.react');
+var UserStore = require('../stores/UserStore');
+
+function getAppState(){
+    return {
+        user: UserStore.getUser(),
+        stats: UserStore.getStats()
+    }
+}
 
 var InfomagicApp = React.createClass({
-    componentDidMount: function(){
-        $(document).foundation();
-    },
-    componentDidUpdate: function(){
-        $(document).foundation();
-    },
     render: function(){
         return (
             <div>
-                <AppHeader />
-                <h1>
-                    Hellow World!
-                </h1>
+                {this.props.children}
             </div>
         );
     }
