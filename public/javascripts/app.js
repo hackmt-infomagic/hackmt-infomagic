@@ -10,7 +10,7 @@ var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var browserHistory = ReactRouter.browserHistory;
 
-AppActions.getUser(2);
+AppActions.getUser(222);
 
 ReactDom.render((
     <Router history={browserHistory}>
