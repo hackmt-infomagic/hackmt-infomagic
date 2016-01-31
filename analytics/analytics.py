@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from pymongo import MongoClient
 from math import ceil
 from sklearn.neighbors import KernelDensity
+from sklearn import cluster, datasets
+from sklearn.neighbors import kneighbors_graph
 
 def get_db_connection():
     client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
@@ -305,3 +307,25 @@ def calc_binned_probabilities(user_data, bin_duration):
         results.append(calc_probabilities(user_data['subjects'],data))
     return(results)
 
+def cluster_probabilities(binned_probabilities,n_clust):
+    patterns = numpy.zeros((len(binned_probabilities),len(binned_probabilities[0]['P'])))
+    for x in range(len(binned_probabilities)):
+        patterns[x,:] = binned_probabilities[x]['P']
+    ## patterns = patterns[:,:-1]
+    # connectivity matrix for structured Ward
+    connectivity = kneighbors_graph(patterns, n_neighbors=10, include_self=False)
+    # make connectivity symmetric
+    connectivity = 0.5 * (connectivity + connectivity.T)
+    ## spectral = cluster.SpectralClustering(n_clusters=10,eigen_solver='arpack',affinity="nearest_neighbors")
+    ward = cluster.AgglomerativeClustering(n_clusters=n_clust, linkage='ward',connectivity=connectivity)
+    ward.fit(patterns)
+    assignments = ward.labels_.astype(numpy.int)
+    probabilities = numpy.zeros(patterns.shape)[:,:-1]
+    for x in range(n_clust):
+        temp = patterns[assignments==x,:-1].mean(axis=0)
+        probabilities[x,:] = temp / numpy.linalg.norm(temp)
+    transitions = numpy.zeros((n_clust,n_clust))+0.00000001
+    for x in range(len(assignments)-1):
+    transitions[assignments[x],assignments[x+1]] += 1.0
+    transitions /= transitions.sum()
+    return({'P':probabilities,'joint':transitions,'assignments':assignments,'n_clust':n_clust})
