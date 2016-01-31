@@ -10,9 +10,7 @@ var monk = require('monk');
 var db = monk('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var stats = require('./routes/stats');
-var subjects = require ('./routes/subjects');
+var userAPI = require('./routes/userAPI');
 
 var app = express();
 
@@ -39,7 +37,7 @@ app.use(function(req, res, next){
   req.db = db;
   next();
 });
-app.use('/users', users);
+app.use('/userAPI', userAPI);
 app.use('*', routes);
 
 // catch 404 and forward to error handler

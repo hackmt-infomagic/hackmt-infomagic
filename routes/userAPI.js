@@ -15,12 +15,12 @@ router.get('/', function(req, res, next) {
 
 /*
  * An http request in the form:
- * "http://localhost:3000/Users/(USER_ID)/getUser"
+ * http://localhost:3000/userAPI/getUser/(USER_ID)
  * will retrieve the mongodb document corresponding
  * to the user.
  */
 
-router.get('/:userId/getUser', function(req, res, next) {
+router.get('/getUser/:userId', function(req, res, next) {
   var db = req.db;
   var userId = parseInt(req.params.userId, '10');
   db.get('Users').findOne({'user_id': userId}, function(err, document){
@@ -30,12 +30,12 @@ router.get('/:userId/getUser', function(req, res, next) {
 
 /*
  *	This is a method that accepts an http request of the form
- *	"http://localhost:3000/Users/(USER_ID)/getStats"
+ *	http://localhost:3000/userAPI/getStats/(USER_ID)
  *	and returns a response containing an array corresponding to 
  *  the user's measured statistics.
  */
 
-router.get('/:userId/getStats', function(req, res, next) {
+router.get('/getStats/:userId', function(req, res, next) {
   var db = req.db;
   var userId = parseInt(req.params.userId, '10');
   db.get('Users').findOne({'user_id': userId}, function(err, document){
@@ -45,11 +45,11 @@ router.get('/:userId/getStats', function(req, res, next) {
 
 /*
  * An http request in the form:
- * "http://localhost:3000/Users/(USER_ID)/newSubject", json={'subject':'(SUBJECT_NAME)'}
+ * http://localhost:3000/userAPI/newSubject/(USER_ID)", json={'subject':'(SUBJECT_NAME)'}
  * will add a subject to a particular user document.
  * The response is a string notifying that the subjects array has been updated
  */
-router.post('/:userId/newSubject', function(req, res, next){
+router.post('/newSubject/:userId', function(req, res, next){
 	var db = req.db;
 	var userId = parseInt(req.params.userId, '10');
 	var subject = req.body.subject;
@@ -63,10 +63,10 @@ router.post('/:userId/newSubject', function(req, res, next){
 
 /*
  *	An http request in the form:
- * "http://localhost:3000/users/(USER_ID)/newSession", json={'subject': '(SUBJECT_NAME))', 'start_time': '2077/7/7 12:34:56','end_time': '2088/8/8 10:09:08', 'tags': []}
- * Will create a new session on the user. Input is of type string except for tags, which is an array of strings.
+ *  http://localhost:3000/userAPI/newSession/(USER_ID)/", json={'subject': '(SUBJECT_NAME)', 'start_time': '2077/7/7 12:34:56','end_time': '2088/8/8 10:09:08', 'tags': []}
+ *  Will create a new session on the user. Input is of type string except for tags, which is an array of strings.
  */
- router.post('/:userId/newSession', function(req, res, next){
+ router.post('/newSession/:userId', function(req, res, next){
  	var db = req.db;
  	var userId = parseInt(req.params.userId,'10');
 
