@@ -11,9 +11,12 @@ var _user = {};
 
 var _stats = {};
 
+var _currentSession = {};
+
 function loadUserData(data){
     _user = _.omit(data, 'stats');
     _stats = data['stats'];
+    _currentSession = {};
 }
 
 var UserStore = _.extend({}, EventEmitter.prototype, {
@@ -22,6 +25,9 @@ var UserStore = _.extend({}, EventEmitter.prototype, {
     },
     getStats: function(){
         return _stats;
+    },
+    getSession(){
+        return _currentSession;
     },
     emitChange: function() {
         this.emit('change');

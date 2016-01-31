@@ -12,6 +12,7 @@ var browserHistory = ReactRouter.browserHistory;
 var IndexRoute = ReactRouter.IndexRoute;
 var GraphComponent = require('./components/GraphComponent.react');
 var Overview = require('./components/Overview.react');
+var Focus = require('./components/Focus.react');
 
 AppActions.getUser(222);
 
@@ -19,6 +20,7 @@ ReactDom.render((
     <Router history={browserHistory}>
         <Route path="/" component={InfomagicApp}>
             <IndexRoute component={Overview} />
+            <Route path="/sessionTracker" component={Focus}/>
         </Route>
     </Router>
 ), document.getElementById('react-container'));

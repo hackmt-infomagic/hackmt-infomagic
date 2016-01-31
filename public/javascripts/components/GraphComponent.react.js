@@ -35,6 +35,8 @@ var GraphComponent = React.createClass({
     },
     componentDidUpdate: function(){
         $(document).foundation();
+    },
+    componentWillUnmount: function(){
         UserStore.removeChangeListener(this._onChange);
     },
     render: function(){
