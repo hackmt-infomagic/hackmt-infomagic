@@ -8,6 +8,7 @@ var _ = require('underscore');
 var GraphComponentGlobalCum = require('./GraphComponentGlobalCum.react');
 var GraphComponentSubjectCum = require('./GraphComponentSubjectCum.react');
 var GraphComponentSubjectToals = require('./GraphComponentSubjectTotals.react');
+var GraphComponentAveSeshLen = require('./GraphComponentAvgSeshLen.react');
 
 function getAppState(){
     return {
@@ -50,6 +51,9 @@ var GraphComponent = React.createClass({
                 <div className="graph-container">
                     <div className="row">
                         <GraphComponentGlobalCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}/>
+                    </div>
+                    <div className="row">
+                        <GraphComponentAveSeshLen avgSeshLen={this.state.stats['average_session_lengths']}/>
                     </div>
                     <div className="row">
                         <GraphComponentSubjectToals isEmpty={this.isEmpty} subjects={this.state.user.subjects}
