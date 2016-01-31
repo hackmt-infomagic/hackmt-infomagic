@@ -13,7 +13,7 @@ var GraphComponentAvgSeshLen = React.createClass({
             labels: labels,
             datasets: [{
                 lable: 'subjects',
-                fillColor: "rgba(151,187,205,0.5)",
+                fillColor: "rgba(132, 217, 227, .5)",
                 strokeColor: "rgba(151,187,205,0.8)",
                 highlightFill: "rgba(151,187,205,0.75)",
                 highlightStroke: "rgba(151,187,205,1)",

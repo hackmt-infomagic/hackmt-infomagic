@@ -17,7 +17,7 @@ var AppHeader = React.createClass({
   					</div>
   						<div className="small-8">
 		    				<h1>
-		    					Overview
+		    					Tracktion
 		    				</h1>
     					</div>
 					<div className="small-2 columns align-middle">
