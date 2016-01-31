@@ -360,12 +360,12 @@ def mcmc_simulation(user_data,hmcm,coarse_duration,fine_duration,coarse_iteratio
     coarse_tprobs = hmcm['coarse']['joint']
     coarse_assignments = hmcm['coarse']['assignments']
     
-    ## Generate a possible scenario                                                                                                                                                                                
+    ## Generate a possible scenario  
     new_sessions = []
     for iteration in range(coarse_iterations):
-        ## Select a daytime scenario from -last- daytime                                                                                                                                                           
-        ## probabilities, then continue from there using                                                                                                                                                           
-        ## the transition probabilities                                                                                                                                                                            
+        ## Select a daytime scenario from -last- daytime
+        ## probabilities, then continue from there using
+        ## the transition probabilities
         t_probs = coarse_tprobs[current_scenario,:]
         t_probs /= t_probs.sum()
         current_scenario = numpy.asscalar(numpy.random.choice(range(len(t_probs)), 1, p=t_probs))
