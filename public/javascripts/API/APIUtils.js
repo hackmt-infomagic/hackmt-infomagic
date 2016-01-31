@@ -9,7 +9,6 @@ module.exports = {
             .get('/users/'+userId)
             .end(function(err, res){
                 if(res.ok){
-                    console.log(JSON.stringify(res.body));
                     AppActions.receiveUser(res.body.results)
                 } else {
                     alert('API call failed.');

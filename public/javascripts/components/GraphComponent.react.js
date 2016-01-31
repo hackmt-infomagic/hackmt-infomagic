@@ -7,6 +7,7 @@ var UserStore = require('../stores/UserStore');
 var _ = require('underscore');
 var GraphComponentGlobalCum = require('./GraphComponentGlobalCum.react');
 var GraphComponentSubjectCum = require('./GraphComponentSubjectCum.react');
+var GraphComponentSubjectToals = require('./GraphComponentSubjectTotals.react');
 
 function getAppState(){
     return {
@@ -36,17 +37,31 @@ var GraphComponent = React.createClass({
         UserStore.removeChangeListener(this._onChange);
     },
     render: function(){
-        return(
-            <div>
-                <div className="row">
-                    <GraphComponentGlobalCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}/>
+        var stats = this.state.stats;
+        if(this.isEmpty(stats)){
+            return(
+                <div>
+                    Loading data...
                 </div>
-                <div className="row">
-                    <GraphComponentSubjectCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}
-                    subjects={this.state.user.subjects}/>
+            );
+        }
+        else {
+            return(
+                <div className="graph-container">
+                    <div className="row">
+                        <GraphComponentGlobalCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}/>
+                    </div>
+                    <div className="row">
+                        <GraphComponentSubjectToals isEmpty={this.isEmpty} subjects={this.state.user.subjects}
+                                                    subjectTotals={this.state.stats['subject_totals']} />
+                    </div>)
+                    <div className="row">
+                        <GraphComponentSubjectCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}
+                                                  subjects={this.state.user.subjects}/>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
     },
 
     getOptions: function(){
