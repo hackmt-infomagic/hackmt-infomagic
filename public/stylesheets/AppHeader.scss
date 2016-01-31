@@ -7,7 +7,7 @@ p {
 	height: 90px;
 }
 .spacer45 {
-	height: 90px;
+	height: 45px;
 }
 
 .nav-bar {
@@ -83,5 +83,18 @@ p {
 
 	.start-button{
 		background-color: $theme-dark-blue;
+	}
+}
+
+.graph-container {
+
+	h1 {
+		color: $theme-dark-blue !important;
+		font-size: $font-large;
+		font-weight: 600 !important;
+		margin-bottom: 0;
+		font-family: $theme-font;
+		padding-top: 20px;
+		padding-left: 60px;
 	}
 }

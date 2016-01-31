@@ -14,7 +14,7 @@ var GraphComponentSubjectTotals = React.createClass({
             datasets: [{
                 lable: 'subjects',
                 fillColor: "rgba(132, 217, 227, .5)",
-                strokeColor: "rgba(151,187,205,0.8)",
+                strokeColor: "rgba(20, 49, 73, .4)",
                 highlightFill: "rgba(151,187,205,0.75)",
                 highlightStroke: "rgba(151,187,205,1)",
                 data: this.generateDataset()

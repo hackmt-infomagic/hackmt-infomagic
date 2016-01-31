@@ -23,7 +23,7 @@ var GraphComponentGlobalCum = React.createClass({
                     label: "My First dataset",
                     fillColor: "rgba(132, 217, 227, .2)",
                     strokeColor: "rgba(220,220,220,1)",
-                    pointColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(20, 49, 73, .8)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
@@ -31,7 +31,7 @@ var GraphComponentGlobalCum = React.createClass({
                 }]
             };
             return (
-                <div className="large-12 columns" style={{minWidth: '700px'}}>
+                <div className="large-12 columns" >
                     <LineChart className="large-12 columns" data={data} options={this.setScale(this.props.getOptions())} />
                 </div>
             );

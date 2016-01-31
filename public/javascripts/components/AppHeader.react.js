@@ -8,7 +8,10 @@ var AppHeader = React.createClass({
     render: function(){
         return (
             <div className="fixed">
-  				<nav className="nav-bar top-bar" data-topbar role="navigation">
+
+            <div id="loading" className="loading">Loading&#8230;</div>
+
+  				  <nav id="page" className="nav-bar top-bar" data-topbar role="navigation">
   					<div className="row">
   					<div className="small-2 columns">
   						<a href="#">
