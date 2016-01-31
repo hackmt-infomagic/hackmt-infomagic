@@ -8,6 +8,7 @@ from sklearn.neighbors import KernelDensity
 from sklearn import cluster, datasets
 from sklearn.neighbors import kneighbors_graph
 from sklearn.decomposition import PCA
+from copy import deepcopy
 
 def get_db_connection():
     client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
@@ -323,9 +324,9 @@ def cluster_probabilities(binned_probabilities,n_clust):
     ward.fit(patterns)
     assignments = ward.labels_.astype(numpy.int)
 
-    probabilities = numpy.zeros(patterns.shape)[:,:-1]
+    probabilities = numpy.zeros(patterns.shape)
     for x in range(n_clust):
-        temp = patterns[assignments==x,:-1].mean(axis=0)
+        temp = patterns[assignments==x,:].mean(axis=0)
         probabilities[x,:] = temp / numpy.linalg.norm(temp)
 
     transitions = numpy.zeros((n_clust,n_clust))+0.00000001
@@ -333,13 +334,67 @@ def cluster_probabilities(binned_probabilities,n_clust):
         transitions[assignments[x],assignments[x+1]] += 1.0
     transitions /= transitions.sum()
 
-    pca = PCA(n_components=2)
-    pca = pca.fit(patterns[:,:-1]).transform(patterns[:,:-1])
+    ## pca = PCA(n_components=2)
+    ## pca = pca.fit(patterns[:,:-1]).transform(patterns[:,:-1])
 
-    return({'P':probabilities,'joint':transitions,'assignments':assignments,'n_clust':n_clust,'2dpca':pca})
+    return({'P':probabilities,'joint':transitions,'assignments':assignments,'n_clust':n_clust,'patterns':patterns})
 
 def heirarchical_markov_chain_model(user_data,bin_duration,n_clust):
     fine_grained = calc_binned_probabilities(user_data,bin_duration)
     coarse_grained = cluster_probabilities(fine_grained,n_clust)
     return({'fine':fine_grained,'coarse':coarse_grained})
+
+## course_duration is anticipated to be the bin size from the                                                                                                                                                     
+## call to the hmcm code.                                                                                                                                                                                        
+## fine_duration is up to the user, but should be a reasonably                                                                                                                                                    
+## smaller (~100 times) than the coarse duration.
+def mcmc_simulation(user_data,hmcm,coarse_duration,fine_duration,coarse_iterations):
+    '''Generate a possible future from the given hmcm model'''
+    subjects = user_data['subjects'] + ["not tracked"]
+    scenario_time = user_data['sessions'][-1]['start'] + user_data['sessions'][-1]['end']
+    current_scenario = hmcm['coarse']['assignments'][-1]
+    current_state = 0
+    fine_bins = int(ceil(coarse_duration.total_seconds() / fine_duration.total_seconds()))
+
+    coarse_probs = hmcm['coarse']['P']
+    coarse_tprobs = hmcm['coarse']['joint']
+    coarse_assignments = hmcm['coarse']['assignments']
     
+    ## Generate a possible scenario                                                                                                                                                                                
+    new_sessions = []
+    for iteration in range(coarse_iterations):
+        ## Select a daytime scenario from -last- daytime                                                                                                                                                           
+        ## probabilities, then continue from there using                                                                                                                                                           
+        ## the transition probabilities                                                                                                                                                                            
+        t_probs = coarse_tprobs[current_scenario,:]
+        t_probs /= t_probs.sum()
+        current_scenario = numpy.asscalar(numpy.random.choice(range(len(t_probs)), 1, p=t_probs))
+        ## Find the set of bins that are in this cluster
+        possible_states = numpy.array(range(len(coarse_assignments)))[coarse_assignments==current_scenario]
+        ## Use dot-product distance to create probabilities of selecting
+        distance = numpy.zeros(len(possible_states))
+        mean = coarse_probs[current_scenario,:]
+        for x in range(len(possible_states)):
+            s_probs = hmcm['fine'][possible_states[x]]['P']
+            distance[x] = numpy.inner(mean,s_probs)+1.0
+        distance /= distance.sum()
+        ## Obtain the state!
+        current_state = possible_states[numpy.asscalar(numpy.random.choice(range(len(distance)), 1, p=distance))]
+        s_probs = hmcm['fine'][current_state]['P']
+        t_probs = hmcm['fine'][current_state]['to']
+        
+        ## Simulate in the scenario window...
+        ## This part is not yet correct...
+        subnums = numpy.random.choice(range(len(s_probs)), fine_bins, p=s_probs)
+        current_time = scenario_time
+        duration = fine_duration
+        for x in range(len(subnums)):
+            subject = subjects[subnums[x]]
+            if subject != 'not tracked':
+                mysession = {'subject':subject,'start':current_time,'end':fine_duration,'tags':[]}
+                new_sessions.append(deepcopy(mysession))
+            current_time += fine_duration
+        
+        ## Update scenario_time
+        scenario_time += coarse_duration
+    return(new_sessions)
