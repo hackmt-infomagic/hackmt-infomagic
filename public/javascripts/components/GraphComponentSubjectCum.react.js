@@ -36,7 +36,7 @@ var GraphComponentSubjectCum = React.createClass({
                 label: subject,
                 fillColor: "rgba(132, 217, 227, .1)",
                 strokeColor: "rgba(151,187,205,1)",
-                pointColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(20, 49, 73, .8)",
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(151,187,205,1)",

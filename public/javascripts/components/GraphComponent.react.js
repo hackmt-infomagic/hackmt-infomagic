@@ -42,7 +42,7 @@ var GraphComponent = React.createClass({
         if(this.isEmpty(stats)){
             return(
                 <div>
-                    Loading data...
+                    
                 </div>
             );
         }
@@ -50,16 +50,20 @@ var GraphComponent = React.createClass({
             return(
                 <div className="graph-container">
                     <div className="row">
+                        <h1>Cumulative Hours</h1>
                         <GraphComponentGlobalCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}/>
                     </div>
                     <div className="row">
+                        <h1>Average Session Length</h1>
                         <GraphComponentAveSeshLen avgSeshLen={this.state.stats['average_session_lengths']}/>
                     </div>
                     <div className="row">
+                        <h1>Subject Totals</h1>
                         <GraphComponentSubjectToals isEmpty={this.isEmpty} subjects={this.state.user.subjects}
                                                     subjectTotals={this.state.stats['subject_totals']} />
                     </div>)
                     <div className="row">
+                        <h1>Subject Cumulative</h1>
                         <GraphComponentSubjectCum isEmpty={this.isEmpty} getOptions={this.getOptions} stats={this.state.stats}
                                                   subjects={this.state.user.subjects}/>
                     </div>
