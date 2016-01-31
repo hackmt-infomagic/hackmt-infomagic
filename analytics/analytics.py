@@ -15,14 +15,7 @@ def get_db_connection():
     db = client['hackmt-infomagic']
     return db
 
-<<<<<<< HEAD
 def get_document(db,user_id):
-=======
-
-def get_document(user_id):
-    client = MongoClient('mongodb://hackmt-infomagic:hackmt1!@ds051655.mongolab.com:51655/hackmt-infomagic')
-    db = client['hackmt-infomagic']
->>>>>>> jgd
     collection = db['Users']
     # silent error
     match = collection.find({'user_id':user_id})[0]
@@ -364,7 +357,34 @@ def average_session_lengths(user_data):
   for key in sub_totals.keys():
     sub_totals[key] /= session_counts[key]
 
-<<<<<<< HEAD
+  return sub_totals
+
+def average_session_lengths_hours(user_data):
+  lengths = average_session_lengths(user_data)
+  for key in lengths.keys():
+    lengths[key] = lengths[key].total_seconds() / 3600
+
+  return lengths
+
+def longest_sessions(user_data):
+  '''
+  '''
+  longest_sessions = {subject : timedelta() for subject in user_data['subjects']}
+
+  for session in user_data['sessions']:
+    if session['end'] > longest_sessions[session['subject']]:
+      longest_sessions[session['subject']] = session['end']
+
+  return longest_sessions
+
+
+def longest_sessions_hours(user_data):
+  longests = longest_sessions(user_data)
+  longests_hours = {}
+  for key in longests.keys():
+    longests_hours[key] = longests[key].total_seconds() / 3600
+
+  return longests_hours
 
 def calc_binned_probabilities(user_data, bin_duration):
     results = []
@@ -461,34 +481,3 @@ def mcmc_simulation(user_data,hmcm,coarse_duration,fine_duration,coarse_iteratio
         ## Update scenario_time
         scenario_time += coarse_duration
     return(new_sessions)
-=======
-  return sub_totals
-
-
-def average_session_lengths_hours(user_data):
-  lengths = average_session_lengths(user_data)
-  for key in lengths.keys():
-    lengths[key] = lengths[key].total_seconds() / 3600
-
-  return lengths
-
-def longest_sessions(user_data):
-  '''
-  '''
-  longest_sessions = {subject : timedelta() for subject in user_data['subjects']}
-
-  for session in user_data['sessions']:
-    if session['end'] > longest_sessions[session['subject']]:
-      longest_sessions[session['subject']] = session['end']
-
-  return longest_sessions
-
-
-def longest_sessions_hours(user_data):
-  longests = longest_sessions(user_data)
-  longests_hours = {}
-  for key in longests.keys():
-    longests_hours[key] = longests[key].total_seconds() / 3600
-
-  return longests_hours
->>>>>>> jgd
