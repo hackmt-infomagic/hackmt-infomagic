@@ -147,6 +147,7 @@ def calc_probabilities(subjects,sessions):
     
     ## Calculate transition probabilities using non-zero gaps
     for x in range(len(sessions)-1):
+        ## Might need to keep self-links for coarse model
         if gaps[x] > 0.0 and sessions[x]['subject'] != sessions[x+1]['subject']:
             transition_probabilities[subjects.index(sessions[x]['subject']),subjects.index(sessions[x+1]['subject'])] += 1.0
         else:
@@ -427,10 +428,7 @@ def heirarchical_markov_chain_model(user_data,bin_duration,n_clust):
     coarse_grained = cluster_probabilities(fine_grained,n_clust)
     return({'fine':fine_grained,'coarse':coarse_grained})
 
-## course_duration is anticipated to be the bin size from the                                                                                                                                                     
-## call to the hmcm code.                                                                                                                                                                                        
-## fine_duration is up to the user, but should be a reasonably                                                                                                                                                    
-## smaller (~100 times) than the coarse duration.
+
 def mcmc_simulation(user_data,hmcm,coarse_duration,fine_duration,coarse_iterations):
     '''Generate a possible future from the given hmcm model'''
     subjects = user_data['subjects'] + ["not tracked"]
